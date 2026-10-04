@@ -1,10 +1,139 @@
-# MoveMate — integrated application
+# MoveMate 🚚
 
-React/Vite frontend + Express/MongoDB backend. The active application is `frontend/src/integrated/App.jsx`, loaded by `src/main.jsx`. The original landing-page hero, service cards, images and mint/teal theme are retained. Customer, coordinator and admin operational screens now use API-backed components in `src/integrated`; original prototype components remain as design references and are not the active portal implementation.
+### Helping a friend move without putting work on hold
 
-## 1. Backend (PowerShell)
+MoveMate is a moving coordination prototype connecting customers with coordinators, vehicles and workers. Qwen, accessed through **Backboard.io**, generates editable moving plans. Dedicated customer, coordinator and admin portals manage the booking journey.
 
-Use Node.js 22.12+ (or current supported Node 24). Use MongoDB Atlas or a local MongoDB replica set; standalone MongoDB cannot run reservation transactions.
+Built for the **Hacktoberfest Weekend Challenge: Build for a Friend**.
+
+## The story
+
+A friend in Pune was moving between flats while a critical deployment was happening at work. He needed to attend meetings and support his team while arranging workers, packing and transportation. MoveMate was inspired by this conflict: help people organise moving tasks around their work commitments, with a coordinator and progress updates in one place. The application supports moving requests across cities, rather than being limited to Pune.
+
+## Live links
+
+| Service | Link |
+| --- | --- |
+| Frontend | [Open MoveMate](https://frontend-silk-three-78.vercel.app) |
+| Backend | [API base URL](https://movemate-backend-6cb8.onrender.com/api) |
+| Health check | [Backend health](https://movemate-backend-6cb8.onrender.com/api/health) |
+
+The backend root URL may return `Endpoint not found`; use the API routes above. This prototype does not arrange real moving services.
+
+## Admin demo access
+
+Sign in through the frontend's regular login page. The server determines your role and opens the corresponding dashboard.
+
+| Field | Demo value |
+| --- | --- |
+| Email | `anushkasharma110720@gmail.com` |
+| Password | `anushkasharma110720` |
+
+**Before publishing:** replace these placeholders only with credentials for a dedicated demo account on a demo database. Keep production admin credentials private. Admin access permits operational changes and access to uploaded identity documents, so use fictional data and demo documents in the public environment.
+
+Customers and coordinators can register through the application. Coordinators must complete their application and receive admin approval before accessing assigned jobs.
+
+## Features
+
+### Customer
+
+- Register, sign in and manage a profile.
+- Enter pickup/delivery details, inventory and unavailable hours.
+- Nominate authorised access delegates.
+- Generate and review a Qwen moving plan, or save a manual plan.
+- Submit a request, review an itemised quote and accept it.
+- Follow job progress, exchange messages and decide on extra costs.
+- Confirm delivery, leave a review and report incidents.
+
+### Coordinator
+
+- Submit a work profile, demo identity document and reference consent.
+- View application status and assigned jobs after approval.
+- Follow task checklists and record moving stages.
+- Upload evidence, exchange messages and request additional costs.
+
+### Admin
+
+- Review coordinator applications and record verification checks.
+- Manage vehicles and workers.
+- Assign coordinators, vehicles and crew with reservation conflict checks.
+- Issue itemised quotes and manage operational requests and incidents.
+- Access customer and coordinator operational portals.
+
+## Booking flowchart
+
+```mermaid
+flowchart TD
+    A[Customer creates a draft] --> B[Add inventory and access delegates]
+    B --> C{Plan method}
+    C -->|Qwen through Backboard| D[Generate draft plan]
+    C -->|Manual| E[Write a plan]
+    D --> F[Customer reviews and saves plan]
+    E --> F
+    F --> G[Submit moving request]
+    G --> H[Admin assigns approved team and resources]
+    H --> I[Admin sends itemised quote]
+    I --> J[Customer accepts current quote]
+    J --> K[Coordinator packs and loads]
+    K --> L[Transport and unload]
+    L --> M{Additional costs pending?}
+    M -->|Yes| N[Customer decides on costs]
+    N --> M
+    M -->|No| O[Coordinator requests delivery confirmation]
+    O --> P[Customer confirms delivery]
+    P --> Q[Completed: review or incident report]
+```
+
+### Coordinator approval flow
+
+```mermaid
+flowchart TD
+    A[Coordinator registers] --> B[Submit application and demo documents]
+    B --> C[Admin reviews and records checks]
+    C --> D{Decision}
+    D -->|Approved| E[Eligible for job assignment]
+    D -->|Rejected or pending| F[Application status portal]
+    E --> G[Admin assigns a move]
+    G --> H[Coordinator manages assigned job]
+```
+
+## Technology
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React, Vite, React Router |
+| Backend | Node.js, Express |
+| Database | MongoDB Atlas / MongoDB replica set |
+| AI model | Qwen3-30B-A3B-Instruct-2507 |
+| Hosted AI integration | Backboard.io, configured with OpenRouter model routing |
+| Authentication | JWT, server-side role and ownership checks |
+| Deployment | Vercel frontend, Render backend |
+
+## AI integration and open innovation
+
+The backend's `POST /api/moves/:id/ai-plan` endpoint sends relevant inventory and moving constraints to hosted Qwen through Backboard. The response is validated and presented as an editable draft. The customer reviews and saves the plan before submission.
+
+Qwen is an open-weight model. The configurable model setting enables experimentation; self-hosting and fine-tuning are possible future directions, not implemented features. The current integration uses hosted inference and requires internet access and provider credits.
+
+AI cannot assign providers, confirm availability, set prices, approve charges or determine liability. If AI is unavailable, customers can save a manual plan; the backend does not fabricate an AI response.
+
+## Access control
+
+- Customers access their own moves and customer operations.
+- Coordinators access their application and, after approval, assigned jobs.
+- Admins access operational customer/coordinator APIs and admin APIs.
+- The backend checks role, approval and ownership independently of frontend routing.
+- Login uses the server's role; a client-side role selector cannot grant privileges.
+- Sessions expire after eight hours. Logout revokes server tokens.
+
+## Local setup
+
+### Requirements
+
+- Node.js 22 or newer.
+- MongoDB Atlas or a local MongoDB replica set. Transactions require a replica set; standalone MongoDB is insufficient.
+
+### Backend — PowerShell
 
 ```powershell
 cd backend
@@ -12,48 +141,78 @@ npm install
 Copy-Item .env.example .env
 ```
 
-Set MONGODB_URI, JWT_SECRET (32+ random characters), ADMIN_EMAIL, ADMIN_PASSWORD (12+ characters), CLIENT_ORIGIN=http://localhost:5173. Add BACKBOARD_API_KEY for live Qwen. Set RESET_URL=http://localhost:5173/reset-password and SMTP variables if you want reset emails.
+Configure the values in `backend/.env`, including:
+
+```dotenv
+MONGODB_URI=YOUR_MONGODB_CONNECTION_STRING
+JWT_SECRET=YOUR_RANDOM_SECRET
+CLIENT_ORIGIN=http://localhost:5173
+ADMIN_EMAIL=YOUR_PRIVATE_ADMIN_EMAIL
+ADMIN_PASSWORD=YOUR_PRIVATE_ADMIN_PASSWORD
+BACKBOARD_API_KEY=YOUR_BACKBOARD_KEY
+BACKBOARD_MODEL=qwen/qwen3-30b-a3b-instruct-2507
+```
+
+Use a random JWT secret of at least 32 characters and an admin password of at least 12 characters. Never commit `.env`.
 
 ```powershell
 npm run seed
 npm run dev
 ```
 
-## 2. Frontend (a separate terminal)
+Seeding creates the first admin only if its email does not already exist; it does not overwrite an existing account.
+
+### Frontend — separate PowerShell terminal
 
 ```powershell
 cd frontend
 npm install
 Copy-Item .env.example .env
+```
+
+Set:
+
+```dotenv
+VITE_API_URL=http://localhost:5000/api
+```
+
+```powershell
 npm run dev
 ```
 
-Open http://localhost:5173. Keep the browser origin consistent with CLIENT_ORIGIN; 127.0.0.1 and localhost are different origins. Frontend `.env` needs VITE_API_URL=http://localhost:5000/api. Restart Vite after changing environment variables.
+Open `http://localhost:5173`. Restart Vite after changing environment variables.
 
-## 3. First use
+## Deployment configuration
 
-- Register a customer with email/password. New accounts see an empty dashboard.
-- Register a coordinator, submit the work profile, demo identity document and reference consent. No jobs are available until admin approval.
-- Login as seeded admin. Review the application; record actual identity/reference checks, add vehicles/workers and assign resources to a submitted move.
-- Customer creates a draft, supplies access delegates and inventory, reviews a manual or Qwen plan and submits. Admin sends an itemized quote. Customer accepts. Coordinator starts the job, checks tasks and records progress. Extra costs need approval. Customer confirms delivery and can leave a review or report an incident.
-- Status and messages refresh every 15 seconds on visible move screens. Use manual page refresh for other lists.
+### Render backend
 
-## Permissions
+- Root directory: `backend`
+- Build command: `npm ci --omit=dev`
+- Start command: `npm start`
+- Health path: `/api/health`
+- Set backend environment variables on Render.
+- Set `CLIENT_ORIGIN=https://frontend-silk-three-78.vercel.app` exactly, without a trailing slash.
+- For reset emails, configure SMTP and `RESET_URL=https://frontend-silk-three-78.vercel.app/reset-password`.
+- Store uploads on a persistent disk or private object storage; ephemeral storage loses files on restart/redeploy.
 
-Login uses the server role, never a client role selector. Customer and coordinator routes are isolated; admin can open all portals. Pending/rejected/suspended coordinators see application status. The server independently checks role, approval and move ownership. Session restoration uses an eight-hour token stored in sessionStorage (per browser tab). Logout invalidates server tokens. No passwords or Backboard key are stored in the frontend. Expired/revoked sessions return to login.
+### Vercel frontend
 
-## Qwen and service limits
+- Root directory: `frontend`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Set `VITE_API_URL=https://movemate-backend-6cb8.onrender.com/api` before building.
+- Configure SPA rewrites in `frontend/vercel.json` so dashboard routes work on refresh.
 
-POST /api/moves/:id/ai-plan uses hosted Qwen through Backboard; no key returns a clear error and the editable manual plan remains available. Live Qwen needs your credit/key. Local schema tests mock the provider, while browser tests explicitly verify the unconfigured-provider state. Hosted AI is not offline.
-
-Phone OTP, payments, insurance, automated background checking and browser push are not implemented. Mobile numbers are not falsely marked verified. Password reset needs configured SMTP. Admin permissions are fixed, not user-editable. Identity uploads are private files, not an encrypted vault. Use demo documents until production storage, privacy retention and verification requirements are addressed.
+MongoDB, SMTP and Backboard credentials belong only on the backend. Redeploy the relevant service after changing its environment variables.
 
 ## Checks
 
 ```powershell
+# Backend
 cd backend
 npm test
-# Separate terminal:
+
+# Frontend — separate terminal
 cd frontend
 npm run build
 npm run lint:integrated
@@ -61,10 +220,23 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Install dependencies in both folders before browser tests. E2E runs its own temporary database/API/Vite servers on ports 5050 and 5173; stop your dev frontend first. It uses only demo data and a test-only admin password. Screenshots go to frontend/test-results, which are ignored. Browser tests verify coordinator onboarding, cross-role access, booking, API error handling, team assignment, quote acceptance, cost approvals, delivery, reviews, messages, incidents and profile persistence.
+Backend tests use an isolated MongoDB replica set. AI tests use mocked provider responses; they do not establish live Qwen availability. E2E uses its own temporary servers; stop the development frontend before running it.
 
-Deployment: backend/README.md. API payloads: backend/API.md and Postman collection. Frontend implementation map: backend/FRONTEND_INTEGRATION.md.
+## Prototype limitations
 
-## Frontend deployment
+- No SMS OTP, payment gateway, insurance, automated background checking or continuous GPS.
+- Notifications are in-app, rather than browser push.
+- Password reset requires SMTP configuration.
+- Identity files are private authenticated uploads, not an encrypted identity vault. Use demo documents until production storage and verification processes are addressed.
+- Roles are fixed; there is no editable permissions engine.
 
-For a Render Static Site: root directory frontend, build `npm ci && npm run build`, publish directory dist. Set VITE_API_URL to your backend's HTTPS /api URL before building. Add a rewrite from `/*` to `/index.html` so role routes work on refresh. Set backend CLIENT_ORIGIN to the exact frontend HTTPS origin. Backboard and SMTP keys belong only in backend environment variables.
+## Documentation
+
+- [Backend setup](backend/README.md)
+- [API reference](backend/API.md)
+- [Frontend integration](backend/FRONTEND_INTEGRATION.md)
+- [Postman collection](backend/MoveMate.postman_collection.json)
+
+## Author
+
+Built by **Anushka Sharma** for the Hacktoberfest Weekend Challenge: Build for a Friend.
