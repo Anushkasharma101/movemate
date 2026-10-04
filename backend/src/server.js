@@ -1,0 +1,11 @@
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import {createApp} from './app.js';
+import {Scheduler} from './models.js';
+if(!process.env.MONGODB_URI)throw new Error('MONGODB_URI is required');
+await mongoose.connect(process.env.MONGODB_URI);
+const topology=await mongoose.connection.db.admin().command({hello:1});
+if(!topology.setName && topology.msg!=="isdbgrid")throw new Error("Use MongoDB Atlas or a replica set; booking transactions cannot run on standalone MongoDB.");
+await Scheduler.updateOne({_id:'global'},{$setOnInsert:{revision:0}},{upsert:true});
+const server=createApp().listen(process.env.PORT||5000,()=>console.log(`MoveMate API listening on ${process.env.PORT||5000}`));
+for(const event of ['SIGINT','SIGTERM'])process.on(event,()=>server.close(async()=>{await mongoose.disconnect();process.exit(0);}));

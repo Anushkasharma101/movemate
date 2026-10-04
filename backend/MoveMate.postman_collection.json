@@ -1,0 +1,1083 @@
+{
+  "info": {
+    "name": "MoveMate API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Backend collection. Set role-specific token and returned IDs; examples use demo future dates."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "moveId",
+      "value": ""
+    },
+    {
+      "key": "applicationId",
+      "value": ""
+    },
+    {
+      "key": "coordinatorId",
+      "value": ""
+    },
+    {
+      "key": "vehicleId",
+      "value": ""
+    },
+    {
+      "key": "workerId",
+      "value": ""
+    },
+    {
+      "key": "quoteId",
+      "value": ""
+    },
+    {
+      "key": "changeId",
+      "value": ""
+    },
+    {
+      "key": "incidentId",
+      "value": ""
+    },
+    {
+      "key": "uploadId",
+      "value": ""
+    },
+    {
+      "key": "identityFileId",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
+      "value": ""
+    },
+    {
+      "key": "resetToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /api/health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/health",
+        "auth": {
+          "type": "noauth"
+        }
+      }
+    },
+    {
+      "name": "POST /api/auth/register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/register",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Customer\",\n  \"email\": \"customer@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"ChooseYourOwnStrongPassword\",\n  \"role\": \"customer\",\n  \"acceptTerms\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code < 300) pm.collectionVariables.set(\"token\", pm.response.json().token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST /api/auth/login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"ChooseYourOwnStrongPassword\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code < 300) pm.collectionVariables.set(\"token\", pm.response.json().token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST /api/auth/forgot-password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/forgot-password",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"customer@example.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/auth/reset-password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/reset-password",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"NewStrongPasswordChosenByYou\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/auth/me",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/auth/me"
+      }
+    },
+    {
+      "name": "PATCH /api/auth/me",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/me",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Customer\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/auth/logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/logout",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/coordinator/application",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/coordinator/application"
+      }
+    },
+    {
+      "name": "PUT /api/coordinator/application",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/application",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"workProfile\": {\n    \"city\": \"Pune\",\n    \"serviceAreas\": [\n      \"Pune\"\n    ],\n    \"languages\": [\n      \"Hindi\",\n      \"English\"\n    ],\n    \"experienceYears\": 2,\n    \"providerType\": \"individual\"\n  },\n  \"identityFile\": \"{{identityFileId}}\",\n  \"reference\": {\n    \"name\": \"Reference\",\n    \"phone\": \"9876543210\",\n    \"permission\": true\n  },\n  \"consents\": {\n    \"verification\": true,\n    \"conduct\": true,\n    \"policyVersion\": \"1.0\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/coordinator/application/submit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/application/submit",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"details\": {\n    \"pickupAddress\": \"Baner, Pune\",\n    \"destAddress\": \"Kharadi, Pune\",\n    \"pickupFloor\": \"3\",\n    \"destFloor\": \"1\",\n    \"pickupLift\": \"No\",\n    \"destLift\": \"Yes\",\n    \"moveDate\": \"2030-10-04\",\n    \"homeSize\": \"1 BHK\",\n    \"accessPersonPickup\": \"Friend at pickup\",\n    \"accessPersonDelivery\": \"Friend at delivery\",\n    \"accessNotes\": \"Gate pass arranged\"\n  },\n  \"inventory\": [\n    {\n      \"id\": 1,\n      \"name\": \"Monitor\",\n      \"type\": \"tv\",\n      \"qty\": 1,\n      \"fragile\": true,\n      \"notes\": \"Protect screen\"\n    }\n  ],\n  \"specialInstructions\": \"Do not pack laptop\",\n  \"unavailableHours\": \"11 AM-1 PM\",\n  \"accessAuthorized\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/moves",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/moves"
+      }
+    },
+    {
+      "name": "GET /api/moves/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}"
+      }
+    },
+    {
+      "name": "PATCH /api/moves/:id",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"specialInstructions\": \"Do not pack laptop\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/ai-plan",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/ai-plan",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "PUT /api/moves/:id/plan",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/plan",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"inventory\": [\n    {\n      \"id\": 1,\n      \"name\": \"Monitor\",\n      \"type\": \"tv\",\n      \"qty\": 1,\n      \"fragile\": true,\n      \"notes\": \"Protect screen\"\n    }\n  ],\n  \"handlingInstructions\": [\n    \"Protect screen\"\n  ],\n  \"accessRestrictions\": [\n    \"Third floor stairs\"\n  ],\n  \"unavailableHours\": \"11 AM-1 PM\",\n  \"missingQuestions\": [],\n  \"checklist\": [\n    {\n      \"task\": \"Pack monitor\",\n      \"completed\": false\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/submit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/submit",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/admin/overview",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/overview"
+      }
+    },
+    {
+      "name": "GET /api/admin/coordinator-applications",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/coordinator-applications"
+      }
+    },
+    {
+      "name": "GET /api/admin/coordinator-applications/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/coordinator-applications/{{applicationId}}"
+      }
+    },
+    {
+      "name": "PATCH /api/admin/coordinator-applications/:id/status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/coordinator-applications/{{applicationId}}/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"approved\",\n  \"reviewNotes\": \"Identity and reference checks completed manually\",\n  \"identityChecked\": true,\n  \"referenceChecked\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/admin/moves",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/moves"
+      }
+    },
+    {
+      "name": "GET /api/admin/resources/availability",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/resources/availability?start=2030-10-04T02:30:00.000Z&end=2030-10-04T12:30:00.000Z"
+      }
+    },
+    {
+      "name": "PUT /api/admin/moves/:id/assignment",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/moves/{{moveId}}/assignment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"coordinator\": \"{{coordinatorId}}\",\n  \"vehicle\": \"{{vehicleId}}\",\n  \"workers\": [\n    \"{{workerId}}\"\n  ],\n  \"start\": \"2030-10-04T02:30:00.000Z\",\n  \"end\": \"2030-10-04T12:30:00.000Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/admin/moves/:id/quotes",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/moves/{{moveId}}/quotes",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [\n    {\n      \"label\": \"Transport\",\n      \"amount\": 2000\n    },\n    {\n      \"label\": \"Labour\",\n      \"amount\": 500\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/quote/accept",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/quote/accept",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quoteId\": \"{{quoteId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/quote/request-changes",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/quote/request-changes",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Please clarify packing material costs\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/coordinator/jobs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/coordinator/jobs"
+      }
+    },
+    {
+      "name": "GET /api/coordinator/jobs/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/coordinator/jobs/{{moveId}}"
+      }
+    },
+    {
+      "name": "POST /api/coordinator/jobs/:id/start",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/jobs/{{moveId}}/start",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "PATCH /api/coordinator/jobs/:id/checklist",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/jobs/{{moveId}}/checklist",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"index\": 0,\n  \"completed\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/coordinator/jobs/:id/updates",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/jobs/{{moveId}}/updates",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"loading\",\n  \"note\": \"Packing finished, loading started\",\n  \"files\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/coordinator/jobs/:id/change-requests",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/jobs/{{moveId}}/change-requests",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Additional protective material\",\n  \"amount\": 300,\n  \"files\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/moves/:id/change-requests",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/change-requests"
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/change-requests/:changeId/decision",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/change-requests/{{changeId}}/decision",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"decision\": \"approved\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/coordinator/jobs/:id/ready-for-confirmation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/coordinator/jobs/{{moveId}}/ready-for-confirmation",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/confirm-delivery",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/confirm-delivery",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"received\": true,\n  \"notes\": \"Received\",\n  \"discrepancies\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/review",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/review",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rating\": 5,\n  \"feedback\": \"Good coordination\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/cancel",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/cancel",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Plans changed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/messages",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/messages",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Gate pass is ready\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/moves/:id/incidents",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/incidents",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": \"damage\",\n  \"description\": \"Monitor has a scratch\",\n  \"files\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/admin/incidents",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/incidents"
+      }
+    },
+    {
+      "name": "PATCH /api/admin/incidents/:id",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/incidents/{{incidentId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"under_review\",\n  \"resolution\": \"Gathering pickup and delivery evidence\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/admin/audit-logs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/audit-logs"
+      }
+    },
+    {
+      "name": "GET /api/notifications",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/notifications"
+      }
+    },
+    {
+      "name": "PATCH /api/notifications/:id/read",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/notifications/{{notificationId}}/read",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "POST /api/uploads",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{baseUrl}}/api/uploads",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "purpose",
+              "value": "identity",
+              "type": "text"
+            },
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET /api/uploads/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/uploads/{{uploadId}}"
+      }
+    },
+    {
+      "name": "GET /api/admin/vehicles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/vehicles"
+      }
+    },
+    {
+      "name": "POST /api/admin/vehicles",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/vehicles",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"label\": \"Demo van\",\n  \"registration\": \"DEMO01\",\n  \"type\": \"Van\",\n  \"capacityKg\": 1000,\n  \"capacityM3\": 12,\n  \"driverName\": \"Driver\",\n  \"driverPhone\": \"9876543210\",\n  \"city\": \"Pune\",\n  \"rate\": 1000\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "PATCH /api/admin/vehicles/:id",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/vehicles/{{vehicleId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"active\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/admin/workers",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/admin/workers"
+      }
+    },
+    {
+      "name": "POST /api/admin/workers",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/workers",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Worker\",\n  \"phone\": \"9876543210\",\n  \"city\": \"Pune\",\n  \"skills\": [\n    \"packing\"\n  ],\n  \"rate\": 500\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "PATCH /api/admin/workers/:id",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/workers/{{workerId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"active\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/moves/:id/updates",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/updates"
+      }
+    },
+    {
+      "name": "GET /api/moves/:id/messages",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/messages"
+      }
+    },
+    {
+      "name": "GET /api/moves/:id/incidents",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/moves/{{moveId}}/incidents"
+      }
+    }
+  ]
+}
